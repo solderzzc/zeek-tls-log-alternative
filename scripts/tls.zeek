@@ -300,57 +300,41 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 			Reporter::conn_weird("SSL_many_server_names", c, cat(names));
 		}
 	}
-event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
-{
+
+event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string) {
 	local time_delta:double = 0;
 	local time_delta_cnt:count = 0;
 	local last_seen: time;
 	local local_ts:time = network_time();
-	local base_delta:double;
+	local base_delta:double = 0.0;
 	local latency_double:double;
 	local direction_string:string;
 
-	if ( is_orig == T )
-	{
+	if ( is_orig ){
 		direction_string = "c";
-	}
-	else
-	{
+	} else {
 		direction_string = "s";
 	}
 
 	set_session(c);
-	if ( ! c$tls_conns?$tcp_packet_last_seq )
-		c$tls_conns$tcp_packet_last_seq = seq;
-	else if (c$tls_conns$tcp_packet_last_seq == seq)
-		return;
-	c$tls_conns$tcp_packet_last_seq = seq;
 
-	if ( ! c$tls_conns?$tcp_packet_last_seen )
-	{
+	if ( ! c$tls_conns?$tcp_packet_last_seen ) {
 		c$tls_conns$tcp_packet_last_seen = local_ts;
-	}
-	else
-	{
+	} else {
 		last_seen = c$tls_conns$tcp_packet_last_seen;
 
-		if (  ! c$tls_conns?$base_delta )
-		{
+		if (  ! c$tls_conns?$base_delta ){
 			base_delta = interval_to_double(local_ts-last_seen);
 			base_delta = base_delta/2;
 			c$tls_conns$base_delta = base_delta;
 		}
-		if ( c$tls_conns?$base_delta )
-		{
+		if ( c$tls_conns?$base_delta ) {
 			base_delta = c$tls_conns$base_delta;
 		}
 		latency_double = interval_to_double(local_ts-last_seen);
-		if(base_delta == 0)
-		{
+		if(base_delta == 0.0) {
 			time_delta = 0.0;
-		}
-		else
-		{
+		} else {
 			time_delta = latency_double/base_delta;
 		}
 		time_delta_cnt = double_to_count(time_delta);
@@ -360,36 +344,26 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local latency_string:string;
 	local flags_no_ack:string = subst_string(flags,"A","");
 
-	if ( latency_bitlen < 1 )
-	{
-	latency_string="l<1";
-	} else if( latency_bitlen > 10 )
-	{
-	latency_string="l>10";
-	} else 
-	{
-	latency_string="l:"+cat(latency_bitlen);
+	if ( latency_bitlen < 1 ){
+		latency_string="l<1";
+	} else if( latency_bitlen > 10 ) {
+		latency_string="l>10";
+	} else {
+		latency_string="l:"+cat(latency_bitlen);
 	}
-	if( len > 0)
-	{
+	if( len > 0) {
 		c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 		c$tls_conns$sequence += latency_string;
-		if ( flags_no_ack != "" )
-		{
+		if ( flags_no_ack != "" ){
 			c$tls_conns$sequence += getFullFlag(flags_no_ack);
 		}
-	} 
-	else
-	{
-		if ( flags_no_ack != "" )
-		{
-			c$tls_conns$sequence += direction_string+cat( bitLen(len) );
-			c$tls_conns$sequence += latency_string;
-			c$tls_conns$sequence += getFullFlag(flags_no_ack);
-		}
+	} else if ( flags_no_ack != "" ) {
+		c$tls_conns$sequence += direction_string+cat( bitLen(len) );
+		c$tls_conns$sequence += latency_string;
+		c$tls_conns$sequence += getFullFlag(flags_no_ack);
 	}
-	
 }
+
 event ssl_change_cipher_spec(c: connection, is_orig: bool) &priority=5
 	{
 	set_session(c);
