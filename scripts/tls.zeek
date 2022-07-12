@@ -44,9 +44,10 @@ export {
 		uid: string &log;
 		## Connection 4-tup;e
 		id: conn_id &log;
+		## Numeric SSL/TLS version that the server chose.
+		tls_version_num:      count            &optional;
 		## TLS 1.3 supported versions
 		tls_version: string &log &optional;
-
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
 		## Server name
@@ -174,7 +175,11 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
 event ssl_server_hello(c: connection, version: count, record_version: count, possible_ts: time, server_random: string, session_id: string, cipher: count, comp_method: count)
 	{
 	set_session(c);
-	c$tls_conns$tls_version = version_strings[version];
+	if ( ! c$tls_conns?$tls_version_num )
+	{
+		c$tls_conns$tls_version = version_strings[version];
+		c$tls_conns$tls_version_num = version;
+	}
 	c$tls_conns$cipher = cipher_desc[cipher];
 	c$tls_conns$comp_method = comp_method;
 	}
@@ -288,6 +293,7 @@ event ssl_extension_supported_versions(c: connection, is_orig: bool, versions: i
 	set_session(c);
 
 	c$tls_conns$tls_version = version_strings[versions[0]];
+	c$tls_conns$tls_version_num = versions[0];
 	}
 
 event ssl_extension_psk_key_exchange_modes(c: connection, is_orig: bool, modes: index_vec)
