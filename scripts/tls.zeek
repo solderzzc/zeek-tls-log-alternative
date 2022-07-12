@@ -271,13 +271,13 @@ event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	out[2] = desc;
 
 	c$tls_conns$alert = out;
-	if ( |c&tls_conns$names| == 0 )
+	if ( |c&tls_conns$sequence| == 0 )
 		{
-		c&tls_conns$names = "alert"
+		c&tls_conns$sequence = "alert"
 		}
 	else
 		{
-		c&tls_conns$names += " alert"
+		c&tls_conns$sequence += " alert"
 		}
 	}
 
