@@ -177,7 +177,7 @@ function bitLen(num: count): count
 	local length = 0;
 	while (num != 0)
 		{
-		num /= 2;
+		num = num / 2;
 		length += 1;
 		}
 	return length;
