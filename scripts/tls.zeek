@@ -50,6 +50,8 @@ export {
 		client_version: count &log &optional;
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
+		## Server name
+		server_name: string &log &optional;
 		## Ciphers that were offered by the client for the connection
 		client_ciphers: vector of count  &log &optional;
 		## SNI that was sent by the client
@@ -239,7 +241,17 @@ event ssl_extension_application_layer_protocol_negotiation(c: connection, is_ori
 	else
 		c$tls_conns$resp_alpn = names;
 	}
+event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec) &priority=5
+	{
+	set_session(c);
 
+	if ( is_orig && |names| > 0 )
+		{
+		c$tls_conns$server_name = names[0];
+		if ( |names| > 1 )
+			Reporter::conn_weird("SSL_many_server_names", c, cat(names));
+		}
+	}
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	{
 	set_session(c);
