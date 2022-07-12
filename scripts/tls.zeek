@@ -270,6 +270,12 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local local_ts:time = network_time();
 	local base_delta:double;
 	local latency_double:double;
+	local direction_string:string;
+
+	if ( is_orig )
+		direction_string = "c";
+	else
+		direction_string = "s";
 
 	set_session(c);
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
@@ -292,12 +298,10 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		time_delta_cnt = double_to_count(time_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
-	if ( len > 0 )
-	{
-		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
-		c$tls_conns$sequence += cat(len);
+	c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
+	c$tls_conns$sequence += direction_string+":"+cat(len);
+	if( len == 0 ) 
 		c$tls_conns$sequence +=flags;
-	}
 }
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	{
