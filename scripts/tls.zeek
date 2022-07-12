@@ -266,17 +266,18 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 {
 	set_session(c);
 	local time_delta = 0;
+	local local_ts = network_time();
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
 	{
-		c$tls_conns$tcp_packet_last_seen = network_time();
+		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
 	else
 	{
 		if ( ! c$tls_conns?$base_delta )
-			c$tls_conns$base_delta = time_to_double(network_time() - c$tls_conns$tcp_packet_last_seen)/2;
-		local latency = time_to_double(network_time() - c$tls_conns$tcp_packet_last_seen);
+			c$tls_conns$base_delta = time_to_double(local_ts - c$tls_conns$tcp_packet_last_seen)/2;
+		local latency = time_to_double(local_ts- c$tls_conns$tcp_packet_last_seen);
 		time_delta = double_to_count(latency/c$tls_conns$base_delta);
-		c$tls_conns$tcp_packet_last_seen = network_time();
+		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
 	if ( len > 0 )
 	{
