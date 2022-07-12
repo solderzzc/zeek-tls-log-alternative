@@ -300,10 +300,7 @@ event connection_SYN_packet(c:connection, pkt:SYN_packet)
 {
 	local local_ts:time = network_time();
 	set_session(c);
-	if ( ! c$tls_conns?$tcp_packet_last_seen )
-	{
-		c$tls_conns$tcp_packet_last_seen = local_ts;
-	}
+
 	c$tls_conns$sequence += "c0";
 	c$tls_conns$sequence += "l<1";
 	c$tls_conns$sequence += "SYN";
