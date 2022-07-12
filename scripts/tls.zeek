@@ -260,8 +260,23 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 
 event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
 {
+	set_session(c);
+	local time_delta = 0;
+	if ( ! c$tls_conns?$tcp_packet_last_seen )
+	{
+		c$tls_conns$tcp_packet_last_seen = time_to_double(network_time());
+	}
+	else
+	{
+		if ( ! c$tls_conns?$base_delta )
+			c$tls_conns$base_delta = (time_to_double(network_time()) - c$tls_conns$tcp_packet_last_seen)/2;
+		local latency = time_to_double(network_time()) - c$tls_conns$tcp_packet_last_seen
+		time_delta = double_to_count()
+		c$tls_conns$tcp_packet_last_seen = time_to_double(network_time());
+	}
 	if ( len > 0 )
 	{
+		c$tls_conns$sequence += "l:"+cat(time_delta);
 		c$tls_conns$sequence += cat(len);
 	}
 }
