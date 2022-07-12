@@ -305,7 +305,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	} 
 	else
 	{
-		local flags_no_ack:string = lstrip(flags,"A");
+		local flags_no_ack:string = subst_string(flags,"A","");
 		if ( |flags_no_ack| > 0 )
 		{
 			c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
