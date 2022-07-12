@@ -109,6 +109,8 @@ export {
 		sigalgs: vector of count;# &log &optional;
 		## Client supported hash algorithms
 		hashalgs: vector of count;# &log &optional;
+		## TCP last seq number
+		tcp_packet_last_seq: count;
 	};
 
 	## Event from a manager to workers when encountering a new, cert
@@ -316,6 +318,12 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	}
 
 	set_session(c);
+	if ( ! c$tls_conns?$tcp_packet_last_seq )
+		c$tls_conns$tcp_packet_last_seq = seq;
+	else if (c$tls_conns$tcp_packet_last_seq == seq)
+		return
+	c$tls_conns$tcp_packet_last_seq = seq;
+
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
 	{
 		c$tls_conns$tcp_packet_last_seen = local_ts;
