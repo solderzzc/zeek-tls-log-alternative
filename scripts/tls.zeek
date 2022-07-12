@@ -271,7 +271,7 @@ event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	out[2] = desc;
 
 	c$tls_conns$alert = out;
-	c&tls_conns$sequence += " alert";
+	c&tls_conns$sequence = c&tls_conns$sequence + " alert";
 	}
 event ssl_established(c: connection)
 	{
