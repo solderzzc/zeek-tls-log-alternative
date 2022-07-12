@@ -340,7 +340,14 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		}
 		base_delta = c$tls_conns$base_delta;
 		latency_double = time_to_double(local_ts) - time_to_double(last_seen);
-		time_delta = latency_double/base_delta;
+		if(base_delta == 0)
+		{
+			time_delta = 0.0;
+		}
+		else
+		{
+			time_delta = latency_double/base_delta;
+		}
 		time_delta_cnt = double_to_count(time_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
