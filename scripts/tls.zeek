@@ -173,6 +173,7 @@ function set_session(c: connection)
 		t$ssl_client_exts=vector();
 		t$ssl_server_exts=vector();
 		t$sequence=vector();
+		t$client_syn_count=0;
 		c$tls_conns = t;
 		}
 	}
