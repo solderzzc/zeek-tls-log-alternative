@@ -321,7 +321,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	if ( ! c$tls_conns?$tcp_packet_last_seq )
 		c$tls_conns$tcp_packet_last_seq = seq;
 	else if (c$tls_conns$tcp_packet_last_seq == seq)
-		return
+		return;
 	c$tls_conns$tcp_packet_last_seq = seq;
 
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
