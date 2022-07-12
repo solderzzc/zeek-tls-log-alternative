@@ -355,8 +355,8 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 
 	if ( latency_bitlen < 1 ){
 		latency_string="l<1";
-	} else if( latency_bitlen > 10 ) {
-		latency_string="l>10";
+	} else if( latency_bitlen > 20 ) {
+		latency_string="l>20";
 	} else {
 		latency_string="l:"+cat(latency_bitlen);
 	}
