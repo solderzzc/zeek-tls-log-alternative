@@ -271,7 +271,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		if ( ! c$tls_conns?$base_delta )
 			c$tls_conns$base_delta = (time_to_double(network_time()) - c$tls_conns$tcp_packet_last_seen)/2;
 		local latency = time_to_double(network_time()) - c$tls_conns$tcp_packet_last_seen
-		time_delta = double_to_count()
+		time_delta = double_to_count(latency/c$tls_conns$base_delta)
 		c$tls_conns$tcp_packet_last_seen = time_to_double(network_time());
 	}
 	if ( len > 0 )
