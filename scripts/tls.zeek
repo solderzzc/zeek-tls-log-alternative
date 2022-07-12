@@ -51,7 +51,7 @@ export {
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
 		## Plain text sequence string
-		sequence: string &log;
+		sequence: string &log &optional;
 		## Server name
 		server_name: string &log &optional;
 		## Ciphers that were offered by the client for the connection
