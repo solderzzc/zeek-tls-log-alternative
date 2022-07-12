@@ -327,16 +327,16 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	{
 		last_seen = c$tls_conns$tcp_packet_last_seen;
 
-		if ( ! c$tls_conns?$base_delta )
+		if ( is_orig == F and ! c$tls_conns?$base_delta )
 		{
-			if ( is_orig == F )
-			{
-				base_delta = time_to_double(local_ts) - time_to_double(last_seen);
-				base_delta = base_delta/2;
-				c$tls_conns$base_delta = base_delta;
-			}
+			base_delta = time_to_double(local_ts) - time_to_double(last_seen);
+			base_delta = base_delta/2;
+			c$tls_conns$base_delta = base_delta;
 		}
-		base_delta = c$tls_conns$base_delta;
+		if ( c$tls_conns?$base_delta )
+		{
+			base_delta = c$tls_conns$base_delta;
+		}
 		latency_double = time_to_double(local_ts) - time_to_double(last_seen);
 		if(base_delta == 0)
 		{
