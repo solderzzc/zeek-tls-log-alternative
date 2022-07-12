@@ -154,8 +154,8 @@ event TLSLog::tls_new_cert(sha: string)
 	}
 @endif
 
-# Enable ssl_encrypted_data event
-redef SSL::disable_analyzer_after_detection=F;
+# Disable ssl_encrypted_data event
+redef SSL::disable_analyzer_after_detection=T;
 event zeek_init() &priority=5
 	{
 	Log::create_stream(TLSLog::TLS_CERTIFICATE_LOG, [$columns=CertificateInfo, $path="tls_certificates"]);
