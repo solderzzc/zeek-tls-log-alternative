@@ -2,7 +2,6 @@
 ## is much more focused on logging all kinds of protocol features. This can be interesting
 ## for academic purposes - or if one is just interested in more information about specific
 ## features used in local TLS traffic.
-@load base/protocols/tcp
 @load ./consts
 
 module TLSLog;
@@ -163,6 +162,7 @@ function set_session(c: connection)
 		t$id=c$id;
 		t$ssl_client_exts=vector();
 		t$ssl_server_exts=vector();
+		t$sequence=vector();
 		c$tls_conns = t;
 		}
 	}
