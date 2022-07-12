@@ -268,9 +268,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local time_delta_cnt:count = 0;
 	local last_seen: time;
 	local local_ts:time = network_time();
-	local base_delta_time:time;
 	local base_delta:double;
-	local latency:time;
 	local latency_double:double;
 
 	set_session(c);
@@ -289,8 +287,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 			c$tls_conns$base_delta = base_delta;
 		}
 		base_delta = c$tls_conns$base_delta;
-		latency = local_ts - last_seen;
-		latency_double = time_to_double(latency);
+		latency_double = time_to_double(local_ts) - time_to_double(last_seen);
 		time_delta = latency_double/base_delta;
 		time_delta_cnt = double_to_count(time_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
