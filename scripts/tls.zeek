@@ -344,7 +344,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local latency_string:string;
 	local flags_no_ack:string = subst_string(flags,"A","");
 
-	if (flags_no_ack == "S" && is_orig == T) 
+	if (flags_no_ack == "S" && is_orig == T) {
 		if(c$tls_conns$client_syn_count == 0){
 			c$tls_conns$client_syn_count += 1;
 		} else {
