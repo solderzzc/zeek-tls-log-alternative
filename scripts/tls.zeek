@@ -265,7 +265,8 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
 {
 	set_session(c);
-	local time_delta = 0;
+	local time_delta:double = 0;
+	local time_delta_cnt:count = 0;
 	local local_ts = network_time();
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
 	{
@@ -283,13 +284,15 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 			c$tls_conns$base_delta = base_delta/2;
 		}
 		base_delta = c$tls_conns$base_delta;
-		local latency:double = time_to_double(local_ts - last_seen);
-		time_delta = double_to_count(latency/c$tls_conns$base_delta);
+		local latency:time = local_ts - last_seen;
+		local latency_double = time_to_double(latency);
+		time_delta = latency/base_delta;
+		time_delta_cnt = double_to_count(time_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
 	if ( len > 0 )
 	{
-		c$tls_conns$sequence += "l:"+cat(time_delta);
+		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
 		c$tls_conns$sequence += cat(len);
 	}
 }
