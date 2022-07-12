@@ -298,10 +298,22 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		time_delta_cnt = double_to_count(time_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
-	c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
-	c$tls_conns$sequence += direction_string+":"+cat(len);
-	if( len == 0 ) 
-		c$tls_conns$sequence +=flags;
+	if( len > 0)
+	{
+		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
+		c$tls_conns$sequence += direction_string+":"+cat(len);
+	} 
+	else
+	{
+		local flags_no_ack:string = lstrip(flags,"A");
+		if ( |flags_no_ack| > 0 )
+		{
+			c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
+			c$tls_conns$sequence += direction_string+":"+cat(len);
+			c$tls_conns$sequence +=flags_no_ack;
+		}
+	}
+	
 }
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	{
