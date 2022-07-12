@@ -273,9 +273,17 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	}
 	else
 	{
+		local base_delta: double;
+		local last_seen: time;
+		last_seen = c$tls_conns$tcp_packet_last_seen;
+
 		if ( ! c$tls_conns?$base_delta )
-			c$tls_conns$base_delta = time_to_double(local_ts - c$tls_conns$tcp_packet_last_seen)/2;
-		local latency = time_to_double(local_ts- c$tls_conns$tcp_packet_last_seen);
+		{
+			base_delta = local_ts - last_seen;
+			c$tls_conns$base_delta = base_delta/2;
+		}
+		base_delta = c$tls_conns$base_delta;
+		local latency:double = time_to_double(local_ts - last_seen);
 		time_delta = double_to_count(latency/c$tls_conns$base_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
