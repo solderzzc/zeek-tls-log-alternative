@@ -152,6 +152,8 @@ event TLSLog::tls_new_cert(sha: string)
 	}
 @endif
 
+# Enable ssl_encrypted_data event
+redef SSL::disable_analyzer_after_detection=F;
 event zeek_init() &priority=5
 	{
 	Log::create_stream(TLSLog::TLS_CERTIFICATE_LOG, [$columns=CertificateInfo, $path="tls_certificates"]);
@@ -316,7 +318,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local latency_double:double;
 	local direction_string:string;
 
-	if ( is_orig )
+	if ( is_orig == T )
 		direction_string = "c";
 	else
 		direction_string = "s";
