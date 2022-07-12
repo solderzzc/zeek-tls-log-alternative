@@ -335,7 +335,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		if (  ! c$tls_conns?$base_delta )
 		{
 			base_delta = time_to_double(local_ts) - time_to_double(last_seen);
-			base_delta = base_delta/4;
+			base_delta = base_delta/2;
 			c$tls_conns$base_delta = base_delta;
 		}
 		if ( c$tls_conns?$base_delta )
