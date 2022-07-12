@@ -172,6 +172,28 @@ function set_session(c: connection)
 		c$tls_conns = t;
 		}
 	}
+function getFullFlag(flag:string): string
+	{
+
+		if( flag == "F" )
+			return "FIN";
+		else if( flag == "S")
+			return "SYN";
+		else if( flag == "R")
+			return "RST";
+		else if( flag == "P")
+			return "PSH";
+		else if( flag == "A")
+			return "ACK";
+		else if( flag == "U")
+			return "URG";
+		else if( flag == "E")
+			return "ECE";
+		else if( flag == "C")
+			return "CWR";
+		else
+			return "";
+	}
 function bitLen(num: count): count
 	{
 	local length = 0;
@@ -334,7 +356,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		{
 			c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 			c$tls_conns$sequence += latency_string;
-			c$tls_conns$sequence +=flags_no_ack;
+			c$tls_conns$sequence += getFullFlag(flags_no_ack);
 		}
 	}
 	
