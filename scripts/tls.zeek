@@ -296,15 +296,15 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 			Reporter::conn_weird("SSL_many_server_names", c, cat(names));
 		}
 	}
-event connection_SYN_packet(c:connection, pkt:SYN_packet)
-{
-	local local_ts:time = network_time();
-	set_session(c);
-
-	c$tls_conns$sequence += "c0";
-	c$tls_conns$sequence += "l<1";
-	c$tls_conns$sequence += "SYN";
-}
+# event connection_SYN_packet(c:connection, pkt:SYN_packet)
+# {
+#	local local_ts:time = network_time();
+#	set_session(c);
+#
+#	c$tls_conns$sequence += "c0";
+#	c$tls_conns$sequence += "l<1";
+#	c$tls_conns$sequence += "SYN";
+#}
 event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
 {
 	local time_delta:double = 0;
