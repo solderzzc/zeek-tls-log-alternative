@@ -50,6 +50,10 @@ export {
 		tls_version: string &log &optional;
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
+		## Sequence base delta for latancy
+		base_delta: double &log &optional;
+		## Save last seen tcp packet timestamp
+		tcp_packet_last_seen: time;
 		## Plain text sequence string
 		sequence: vector of string &log &optional;
 		## Server name
