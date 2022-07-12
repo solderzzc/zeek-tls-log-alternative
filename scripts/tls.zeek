@@ -375,7 +375,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	else
 	{
 		local flags_no_ack:string = subst_string(flags,"A","");
-		if ( |flags_no_ack| > 0 )
+		if ( flags_no_ack != "" )
 		{
 			c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 			c$tls_conns$sequence += latency_string;
