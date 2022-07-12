@@ -51,7 +51,7 @@ export {
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
 		## Plain text sequence string
-		sequence: string &log &optional;
+		sequence: vector of string &log &optional;
 		## Server name
 		server_name: string &log &optional;
 		## Ciphers that were offered by the client for the connection
@@ -261,7 +261,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 {
 	if ( len > 0 )
 	{
-		c$tls_conns$sequence += " "+cat(len);
+		c$tls_conns$sequence += cat(len);
 	}
 }
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
@@ -279,7 +279,7 @@ event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	out[2] = desc;
 
 	c$tls_conns$alert = out;
-	c$tls_conns$sequence += " alert";
+	c$tls_conns$sequence += "alert";
 	}
 event ssl_established(c: connection)
 	{
