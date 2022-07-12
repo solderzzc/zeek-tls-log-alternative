@@ -284,8 +284,8 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 
 		if ( ! c$tls_conns?$base_delta )
 		{
-			base_delta_time = local_ts - last_seen;
-			base_delta = time_to_double(base_delta_time/2);
+			base_delta = time_to_double(local_ts) - time_to_double(last_seen);
+			base_delta = base_delta/2;
 			c$tls_conns$base_delta = base_delta;
 		}
 		base_delta = c$tls_conns$base_delta;
