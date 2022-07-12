@@ -109,8 +109,8 @@ export {
 		sigalgs: vector of count;# &log &optional;
 		## Client supported hash algorithms
 		hashalgs: vector of count;# &log &optional;
-		## TCP last seq number
-		tcp_packet_last_seq: count;
+		## TCP SYN from client
+		client_syn_count: count;
 	};
 
 	## Event from a manager to workers when encountering a new, cert
@@ -344,6 +344,14 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local latency_string:string;
 	local flags_no_ack:string = subst_string(flags,"A","");
 
+	if (flags_no_ack == "S" && is_orig == T) 
+		if(c$tls_conns$client_syn_count == 0){
+			c$tls_conns$client_syn_count += 1;
+		} else {
+			c$tls_conns$sequence += "dup_syn";
+			return;
+		}
+	}
 	if ( latency_bitlen < 1 ){
 		latency_string="l<1";
 	} else if( latency_bitlen > 10 ) {
