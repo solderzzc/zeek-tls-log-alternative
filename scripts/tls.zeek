@@ -296,6 +296,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	{
 		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
 		c$tls_conns$sequence += cat(len);
+		c$tls_conns$sequence +=flags;
 	}
 }
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
