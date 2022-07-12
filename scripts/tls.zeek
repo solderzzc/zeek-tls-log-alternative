@@ -316,9 +316,13 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local direction_string:string;
 
 	if ( is_orig == T )
+	{
 		direction_string = "c";
+	}
 	else
+	{
 		direction_string = "s";
+	}
 
 	set_session(c);
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
@@ -374,7 +378,12 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 			c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 			c$tls_conns$sequence += latency_string;
 			c$tls_conns$sequence += getFullFlag(flags_no_ack);
-		}
+		} 
+		# else 
+		# {
+		#	c$tls_conns$sequence += direction_string+cat( bitLen(len) );
+		#	c$tls_conns$sequence += latency_string;
+		#}
 	}
 	
 }
