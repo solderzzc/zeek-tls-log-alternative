@@ -54,6 +54,8 @@ export {
 		base_delta: double &log &optional;
 		## Save last seen tcp packet timestamp
 		tcp_packet_last_seen: time;
+		## Client key length
+		client_key_length: count &log &optional;
 		## Plain text sequence string
 		sequence: vector of string &log &optional;
 		## Server name
@@ -300,21 +302,33 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	}
 	if( len > 0)
 	{
-		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
 		c$tls_conns$sequence += direction_string+":"+cat(len);
+		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
 	} 
 	else
 	{
 		local flags_no_ack:string = subst_string(flags,"A","");
 		if ( |flags_no_ack| > 0 )
 		{
-			c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
 			c$tls_conns$sequence += direction_string+":"+cat(len);
+			c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
 			c$tls_conns$sequence +=flags_no_ack;
 		}
 	}
 	
 }
+event ssl_change_cipher_spec(c: connection, is_orig: bool) &priority=5
+	{
+	set_session(c);
+	c$tls_conns$sequence += "change_cipher_spec";
+	}
+event ssl_handshake_message(c: connection, is_orig: bool, msg_type: count, length: count) &priority=5
+	{
+	set_session(c);
+
+	if ( is_orig && msg_type == SSL::CLIENT_KEY_EXCHANGE )
+		c$tls_conns$client_key_length = length;
+	}
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	{
 	set_session(c);
