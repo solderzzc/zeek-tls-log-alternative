@@ -294,7 +294,18 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 			Reporter::conn_weird("SSL_many_server_names", c, cat(names));
 		}
 	}
-
+event connection_SYN_packet(c:connection, pkt:SYN_packet)
+{
+	local local_ts:time = network_time();
+	set_session(c);
+	if ( ! c$tls_conns?$tcp_packet_last_seen )
+	{
+		c$tls_conns$tcp_packet_last_seen = local_ts;
+	}
+	c$tls_conns$sequence += "c0";
+	c$tls_conns$sequence += "l<1";
+	c$tls_conns$sequence += "SYN";
+}
 event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
 {
 	local time_delta:double = 0;
@@ -346,7 +357,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	}
 	if( len > 0)
 	{
-		c$tls_conns$sequence += direction_string+":"+cat( bitLen(len) );
+		c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 		c$tls_conns$sequence += latency_string;
 	} 
 	else
