@@ -48,7 +48,7 @@ export {
 		## Numeric version of the client in the client hello
 		client_version: count &log &optional;
 		## Cipher that was chosen for the connection
-		cipher: count &log &optional;
+		cipher: string &log &optional;
 		## Ciphers that were offered by the client for the connection
 		client_ciphers: vector of count  &log &optional;
 		## SNI that was sent by the client
@@ -175,7 +175,7 @@ event ssl_server_hello(c: connection, version: count, record_version: count, pos
 	{
 	set_session(c);
 	c$tls_conns$server_version = version;
-	c$tls_conns$cipher = cipher;
+	c$tls_conns$cipher = cipher_desc[cipher];
 	c$tls_conns$comp_method = comp_method;
 	}
 
