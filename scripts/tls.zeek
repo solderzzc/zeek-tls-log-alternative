@@ -61,30 +61,30 @@ export {
 		## Server name
 		server_name: string &log &optional;
 		## Ciphers that were offered by the client for the connection
-		client_ciphers: vector of count  &log &optional;
+		client_ciphers: vector of count;#  &log &optional;
 		## SNI that was sent by the client
-		sni: vector of string &log &optional;
+		sni: vector of string;# &log &optional;
 		## SSL Client extensions
-		ssl_client_exts: vector of count &log &optional;
+		ssl_client_exts: vector of count;# &log &optional;
 		## SSL server extensions
-		ssl_server_exts: vector of count &log &optional;
+		ssl_server_exts: vector of count;# &log &optional;
 		## Suggested ticket lifetime sent in the session ticket handshake
 		## by the server.
-		ticket_lifetime_hint: count &log &optional;
+		ticket_lifetime_hint: count;# &log &optional;
 		## Hashes of the full certificate chain sent by the server
-		server_certs: vector of string &log &optional;
+		server_certs: vector of string;# &log &optional;
 		## Hashes of the full certificate chain sent by the server
-		client_certs: vector of string &log &optional;
+		client_certs: vector of string;# &log &optional;
 		## Set to true if the ssl_established event was seen.
 		ssl_established: bool &log &default=F;
 		## The diffie helman parameter size, when using DH.
-		dh_param_size: count &log &optional;
+		dh_param_size: count;# &log &optional;
 		## supported elliptic curve point formats
-		point_formats: vector of count  &log &optional;
+		point_formats: vector of count;#  &log &optional;
 		## The curves supported by the client.
-		client_curves: vector of count  &log &optional;
+		client_curves: vector of count;#  &log &optional;
 		## The curve the server chose when using ECDH.
-		curve: count &log &optional;
+		curve: count;# &log &optional;
 		## Application layer protocol negotiation extension sent by the client.
 		orig_alpn: vector of string &log &optional;
 		## Application layer protocol negotiation extension sent by the server.
@@ -96,19 +96,19 @@ export {
 		## TLS 1.3 supported versions
 		##  client_supported_versions: vector of count &log &optional;
 		## TLS 1.3 Pre-shared key exchange modes
-		psk_key_exchange_modes: vector of count &log &optional;
+		psk_key_exchange_modes: vector of count;# &log &optional;
 		## Key share groups from client hello
-		client_key_share_groups: vector of count &log &optional;
+		client_key_share_groups: vector of count;# &log &optional;
 		## Selected key share group from server hello
-		server_key_share_group: count &log &optional;
+		server_key_share_group: count;# &log &optional;
 		## Client supported compression methods
-		client_comp_methods: vector of count &log &optional;
+		client_comp_methods: vector of count;# &log &optional;
 		## Server chosen compression method
 		comp_method: count;
 		## Client supported signature algorithms
-		sigalgs: vector of count &log &optional;
+		sigalgs: vector of count;# &log &optional;
 		## Client supported hash algorithms
-		hashalgs: vector of count &log &optional;
+		hashalgs: vector of count;# &log &optional;
 	};
 
 	## Event from a manager to workers when encountering a new, cert
@@ -296,15 +296,6 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 			Reporter::conn_weird("SSL_many_server_names", c, cat(names));
 		}
 	}
-# event connection_SYN_packet(c:connection, pkt:SYN_packet)
-# {
-#	local local_ts:time = network_time();
-#	set_session(c);
-#
-#	c$tls_conns$sequence += "c0";
-#	c$tls_conns$sequence += "l<1";
-#	c$tls_conns$sequence += "SYN";
-#}
 event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
 {
 	local time_delta:double = 0;
