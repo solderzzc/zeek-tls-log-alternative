@@ -50,6 +50,8 @@ export {
 		tls_version: string &log &optional;
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
+		## Plain text sequence string
+		sequence: string &log;
 		## Server name
 		server_name: string &log &optional;
 		## Ciphers that were offered by the client for the connection
@@ -269,6 +271,14 @@ event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	out[2] = desc;
 
 	c$tls_conns$alert = out;
+	if ( |c&tls_conns$names| == 0 )
+		{
+		c&tls_conns$names = "alert"
+		}
+	else
+		{
+		c&tls_conns$names += " alert"
+		}
 	}
 
 event ssl_established(c: connection)
