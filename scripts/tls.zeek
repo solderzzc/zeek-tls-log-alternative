@@ -44,10 +44,9 @@ export {
 		uid: string &log;
 		## Connection 4-tup;e
 		id: conn_id &log;
-		## Numeric version of the server in the server hello
-		server_version: count &log &optional;
-		## Numeric version of the client in the client hello
-		client_version: count &log &optional;
+		## TLS 1.3 supported versions
+		tls_version: string &log &optional;
+
 		## Cipher that was chosen for the connection
 		cipher: string &log &optional;
 		## Server name
@@ -86,9 +85,7 @@ export {
 		## numbers that were transfered
 		alert: vector of count  &log &optional;
 		## TLS 1.3 supported versions
-		client_supported_versions: vector of count &log &optional;
-		## TLS 1.3 supported versions
-		server_supported_version: count &log &optional;
+		##  client_supported_versions: vector of count &log &optional;
 		## TLS 1.3 Pre-shared key exchange modes
 		psk_key_exchange_modes: vector of count &log &optional;
 		## Key share groups from client hello
@@ -170,14 +167,14 @@ event ssl_client_hello(c: connection, version: count, record_version: count, pos
 	{
 	set_session(c);
 	c$tls_conns$client_ciphers = ciphers;
-	c$tls_conns$client_version = version;
+	# c$tls_conns$client_version = version;
 	c$tls_conns$client_comp_methods = comp_methods;
 	}
 
 event ssl_server_hello(c: connection, version: count, record_version: count, possible_ts: time, server_random: string, session_id: string, cipher: count, comp_method: count)
 	{
 	set_session(c);
-	c$tls_conns$server_version = version;
+	c$tls_conns$tls_version = version_strings[version];
 	c$tls_conns$cipher = cipher_desc[cipher];
 	c$tls_conns$comp_method = comp_method;
 	}
@@ -286,11 +283,11 @@ event ssl_dh_server_params(c: connection, p: string, q: string, Ys: string)
 
 event ssl_extension_supported_versions(c: connection, is_orig: bool, versions: index_vec)
 	{
+	if ( is_orig || |versions| != 1 )
+		return;
 	set_session(c);
-	if ( is_orig )
-		c$tls_conns$client_supported_versions = versions;
-	else
-		c$tls_conns$server_supported_version = versions[0];
+
+	c$tls_conns$tls_version = version_strings[versions[0]];
 	}
 
 event ssl_extension_psk_key_exchange_modes(c: connection, is_orig: bool, modes: index_vec)
