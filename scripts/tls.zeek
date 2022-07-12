@@ -172,7 +172,16 @@ function set_session(c: connection)
 		c$tls_conns = t;
 		}
 	}
-
+function bitLen(num: count): count
+	{
+	local length = 0;
+	while (num != 0)
+		{
+		num /= 2;
+		length += 1;
+		}
+	return length;
+	}
 event ssl_client_hello(c: connection, version: count, record_version: count, possible_ts: time, client_random: string, session_id: string, ciphers: index_vec, comp_methods: index_vec)
 	{
 	set_session(c);
@@ -300,18 +309,31 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		time_delta_cnt = double_to_count(time_delta);
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
+	local latency_bitlen:count = bitLen(time_delta_cnt);
+	local latency_string:string;
+
+	if ( latency_bitlen < 1 )
+	{
+	latency_string="l<1";
+	} else if( latency_bitlen > 10 )
+	{
+	latency_string="l>10";
+	} else 
+	{
+	latency_string="l:"+cat(latency_bitlen);
+	}
 	if( len > 0)
 	{
-		c$tls_conns$sequence += direction_string+":"+cat(len);
-		c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
+		c$tls_conns$sequence += direction_string+":"+cat( bitLen(len) );
+		c$tls_conns$sequence += latency_string;
 	} 
 	else
 	{
 		local flags_no_ack:string = subst_string(flags,"A","");
 		if ( |flags_no_ack| > 0 )
 		{
-			c$tls_conns$sequence += direction_string+":"+cat(len);
-			c$tls_conns$sequence += "l:"+cat(time_delta_cnt);
+			c$tls_conns$sequence += direction_string+cat( bitLen(len) );
+			c$tls_conns$sequence += latency_string;
 			c$tls_conns$sequence +=flags_no_ack;
 		}
 	}
