@@ -327,7 +327,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	{
 		last_seen = c$tls_conns$tcp_packet_last_seen;
 
-		if ( is_orig == F and ! c$tls_conns?$base_delta )
+		if ( is_orig == F && ( ! c$tls_conns?$base_delta ) )
 		{
 			base_delta = time_to_double(local_ts) - time_to_double(last_seen);
 			base_delta = base_delta/2;
