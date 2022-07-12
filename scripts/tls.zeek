@@ -323,7 +323,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		if(c$tls_conns$client_syn_count == 0){
 			c$tls_conns$client_syn_count += 1;
 		} else {
-			c$tls_conns$sequence += "dup_syn";
+			# c$tls_conns$sequence += "dup_syn";
 			return;
 		}
 	}
@@ -334,7 +334,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 
 		if (  ! c$tls_conns?$base_delta ){
 			base_delta = interval_to_double(local_ts-last_seen);
-			base_delta = base_delta/2;
+			base_delta = base_delta/10;
 			c$tls_conns$base_delta = base_delta;
 		}
 		if ( c$tls_conns?$base_delta ) {
