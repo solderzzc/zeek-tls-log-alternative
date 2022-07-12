@@ -334,7 +334,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 
 		if (  ! c$tls_conns?$base_delta )
 		{
-			base_delta = time_to_double(local_ts) - time_to_double(last_seen);
+			base_delta = interval_to_double(local_ts-last_seen);
 			base_delta = base_delta/2;
 			c$tls_conns$base_delta = base_delta;
 		}
@@ -342,7 +342,7 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 		{
 			base_delta = c$tls_conns$base_delta;
 		}
-		latency_double = time_to_double(local_ts) - time_to_double(last_seen);
+		latency_double = interval_to_double(local_ts-last_seen);
 		if(base_delta == 0)
 		{
 			time_delta = 0.0;
