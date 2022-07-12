@@ -354,9 +354,9 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	if( len > 0) {
 		c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 		c$tls_conns$sequence += latency_string;
-		if ( flags_no_ack != "" ){
-			c$tls_conns$sequence += getFullFlag(flags_no_ack);
-		}
+		## if ( flags_no_ack != "" ){
+		## 	c$tls_conns$sequence += getFullFlag(flags_no_ack);
+		## }
 	} else if ( flags_no_ack != "" ) {
 		c$tls_conns$sequence += direction_string+cat( bitLen(len) );
 		c$tls_conns$sequence += latency_string;
