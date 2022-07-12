@@ -264,18 +264,18 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 
 event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
 {
-	set_session(c);
 	local time_delta:double = 0;
 	local time_delta_cnt:count = 0;
+	local last_seen: time;
 	local local_ts:time = network_time();
+	local base_delta: double;
+	set_session(c);
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
 	{
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
 	else
 	{
-		local base_delta: double;
-		local last_seen: time;
 		last_seen = c$tls_conns$tcp_packet_last_seen;
 
 		if ( ! c$tls_conns?$base_delta )
