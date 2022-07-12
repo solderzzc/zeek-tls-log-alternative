@@ -315,6 +315,8 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local latency_double:double;
 	local direction_string:string;
 
+	if ( |c$tls_conns$sequence > 300| )
+		return;
 	if ( is_orig == T )
 	{
 		direction_string = "c";
