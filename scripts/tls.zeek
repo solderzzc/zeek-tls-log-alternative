@@ -176,27 +176,29 @@ function set_session(c: connection)
 		c$tls_conns = t;
 		}
 	}
+
 function getFullFlag(flag:string): string
 	{
+		local flags_vec: vector of string;
 
-		if( flag == "F" )
-			return "FIN";
-		else if( flag == "S")
-			return "SYN";
-		else if( flag == "R")
-			return "RST";
-		else if( flag == "P")
-			return "PSH";
-		else if( flag == "A")
-			return "ACK";
-		else if( flag == "U")
-			return "URG";
-		else if( flag == "E")
-			return "ECE";
-		else if( flag == "C")
-			return "CWR";
-		else
-			return "";
+		if( find_str(flag,"F") != -1 )
+			flags_vec += "FIN";		
+		if( find_str(flag,"S") != -1 )
+			flags_vec += "SYN";	
+		if( find_str(flag,"R") != -1 )
+			flags_vec += "RST";	
+		if( find_str(flag,"P") != -1 )
+			flags_vec += "PSH";	
+		if( find_str(flag,"A") != -1 )
+			flags_vec += "ACK";	
+		if( find_str(flag,"U") != -1 )
+			flags_vec += "URG";	
+		if( find_str(flag,"E") != -1 )
+			flags_vec += "ECE";
+		if( find_str(flag,"C") != -1 )
+			flags_vec += "CWR";
+
+		return join_string_vec(flags_vec,",");
 	}
 function bitLen(num: count): count
 	{
