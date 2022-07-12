@@ -306,8 +306,6 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	local latency_double:double;
 	local direction_string:string;
 
-	#if ( |c$tls_conns$sequence| > 300 )
-	#	return;
 	if ( is_orig == T )
 	{
 		direction_string = "c";
@@ -320,17 +318,16 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 	set_session(c);
 	if ( ! c$tls_conns?$tcp_packet_last_seen )
 	{
-		if ( is_orig == T )
-			c$tls_conns$tcp_packet_last_seen = local_ts;
+		c$tls_conns$tcp_packet_last_seen = local_ts;
 	}
 	else
 	{
 		last_seen = c$tls_conns$tcp_packet_last_seen;
 
-		if ( is_orig == F && ( ! c$tls_conns?$base_delta ) )
+		if (  ! c$tls_conns?$base_delta )
 		{
 			base_delta = time_to_double(local_ts) - time_to_double(last_seen);
-			base_delta = base_delta/2;
+			base_delta = base_delta/4;
 			c$tls_conns$base_delta = base_delta;
 		}
 		if ( c$tls_conns?$base_delta )
