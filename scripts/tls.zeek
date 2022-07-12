@@ -256,6 +256,14 @@ event ssl_extension_server_name(c: connection, is_orig: bool, names: string_vec)
 			Reporter::conn_weird("SSL_many_server_names", c, cat(names));
 		}
 	}
+
+event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: count, len: count, payload: string)
+{
+	if ( len > 0 )
+	{
+		c$tls_conns$sequence += " "+cat(len);
+	}
+}
 event ssl_alert(c: connection, is_orig: bool, level: count, desc: count)
 	{
 	set_session(c);
