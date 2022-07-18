@@ -110,7 +110,7 @@ export {
 		## Client supported hash algorithms
 		hashalgs: vector of count;# &log &optional;
 		## TCP SYN from client
-		client_syn_count: count;
+		#client_syn_count: count;
 	};
 
 	## Event from a manager to workers when encountering a new, cert
@@ -173,7 +173,7 @@ function set_session(c: connection)
 		t$ssl_client_exts=vector();
 		t$ssl_server_exts=vector();
 		t$sequence=vector();
-		t$client_syn_count=0;
+		#t$client_syn_count=0;
 		c$tls_conns = t;
 		}
 	}
@@ -319,14 +319,14 @@ event tcp_packet(c: connection, is_orig: bool, flags: string, seq: count, ack: c
 
 	set_session(c);
 
-	if (subst_string(flags,"A","") == "S" && is_orig == T) {
-		if(c$tls_conns$client_syn_count == 0){
-			c$tls_conns$client_syn_count += 1;
-		} else {
+	#if (subst_string(flags,"A","") == "S" && is_orig == T) {
+	#	if(c$tls_conns$client_syn_count == 0){
+	#		c$tls_conns$client_syn_count += 1;
+	#	} else {
 			# c$tls_conns$sequence += "dup_syn";
-			return;
-		}
-	}
+	#		return;
+	#	}
+	#}
 	if ( ! c$tls_conns?$tcp_packet_last_seen ) {
 		c$tls_conns$tcp_packet_last_seen = local_ts;
 	} else {
